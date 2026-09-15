@@ -61,8 +61,8 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: "NeueAlteGrotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -83,7 +83,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.95rem;
   color: var(--ink);
   text-decoration: none;
@@ -146,7 +146,7 @@ body {
 
 .sidebar .current-track-label {
   display: block;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.95rem;
   color: var(--ink);
   padding: 0.2rem 0.5rem 0.9rem;
@@ -234,10 +234,11 @@ body {
 
 h1 {
   font-size: 2rem;
-  line-height: 1.25;
+  line-height: 1.1;
   margin: 0 0 0.5rem;
-  letter-spacing: -0.015em;
-  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  font-kerning: none;
 }
 
 .subtitle {
@@ -251,8 +252,9 @@ h2 { font-size: 1.05rem; display: none; } /* h2 in body content is redundant wit
 h3 {
   font-size: 1.1rem;
   margin: 1.8rem 0 0.6rem;
-  font-weight: 700;
-  letter-spacing: -0.005em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-kerning: none;
 }
 
 p { margin: 0 0 1.05rem; }
