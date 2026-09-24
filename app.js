@@ -66,6 +66,7 @@
 
   function buildTopbarTracks() {
     var nav = document.getElementById("topbar-tracks");
+    if (!nav) return;
     nav.innerHTML = "";
     TRACK_ORDER.forEach(function (key) {
       var data = content()[key];
@@ -160,6 +161,8 @@
     var overlay = document.getElementById("sidebar-overlay");
     sidebar.classList.remove("open");
     overlay.classList.remove("open");
+    var toggle = document.getElementById("sidebar-toggle");
+    if (toggle) toggle.setAttribute("aria-expanded", "false");
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -171,10 +174,14 @@
     var sidebar = document.getElementById("sidebar");
     var overlay = document.getElementById("sidebar-overlay");
     toggle.addEventListener("click", function () {
-      sidebar.classList.toggle("open");
-      overlay.classList.toggle("open");
+      var opened = sidebar.classList.toggle("open");
+      overlay.classList.toggle("open", opened);
+      toggle.setAttribute("aria-expanded", String(opened));
     });
     overlay.addEventListener("click", closeSidebarMobile);
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") closeSidebarMobile();
+    });
   });
 
   window.addEventListener("hashchange", route);

@@ -5,22 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Claude Certified Architect — Foundations</title>
   <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="frontier-shell.css?v=1">
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#">
-      <span class="mark"></span>
-      Claude Certified Architect — Foundations
-    </a>
-    <nav class="topbar-tracks" id="topbar-tracks"></nav>
-  </header>
   <div class="app">
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <aside class="sidebar" id="sidebar">
+      <a class="sidebar-brand" href="#">Claude Certified Architect</a>
+      <div class="sidebar-sub">Foundations</div>
       <nav id="sidebar-nav"></nav>
     </aside>
-    <div style="flex:1; min-width:0;">
-      <div class="sidebar-toggle" id="sidebar-toggle">☰ Menu</div>
+    <div class="reader-shell">
+      <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="false">
+        <span aria-hidden="true">☰</span> Lessons
+      </button>
       <main class="content-pane" id="content-pane"></main>
     </div>
   </div>
