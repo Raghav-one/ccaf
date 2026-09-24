@@ -20,12 +20,25 @@ window.SITE_CONTENT = window.SITE_CONTENT || {};
   }
 
   function lesson(id, title, problem, choice, boundary, signal, kind, example) {
-    var body = '<div class="beat problem"><span class="label">Scenario</span><p>' + problem + '</p></div>';
-    body += '<div class="beat solution"><span class="label">Architecture choice</span><p>' + choice + '</p>';
+    var implementationDepth = {
+      loop: 'Model the workflow as explicit state, not as a sequence of reassuring model phrases. Persist the response, requested calls, matching results, and terminal reason so an interrupted run can be inspected or resumed without inventing history. The useful operational evidence is a trace in which every request has a matching result or a recorded failure path.',
+      hub: 'Give each participant a bounded artifact to own: a question, evidence, assumptions, and a return shape. The coordinator should merge artifacts, not infer invisible work from confident prose. This makes duplicate investigation, stale handoffs, and missing integration checks observable before they reach a final answer.',
+      gate: 'Put the irreversible boundary where code can evaluate it before the side effect: validate authority, required evidence, and idempotency at that point. Record both allow and deny outcomes in a structured form. A later narrative explanation is useful to a human, but it must not be the mechanism that prevents harm.',
+      tool: 'Treat the tool contract as part of the model interface. The description, input schema, success envelope, and error categories must let the caller distinguish correction, retry, escalation, and an empty-but-valid answer. Instrument which tools were considered and called so a routing problem can be diagnosed from evidence rather than prompt guesswork.',
+      config: 'Keep the configuration boundary explicit in the repository: committed rules explain the shared workflow, while credentials and personal assumptions remain outside version control. Verify the effective configuration in the runtime that will use it. A correct-looking file is not proof that the intended scope, permissions, or environment variables were actually loaded.',
+      prompt: 'Use the model for judgment within a bounded contract, then use deterministic code to check structure and invariants. Preserve the original input, model output, validation result, and any targeted retry reason together. That record is what allows a team to distinguish a prompt weakness from bad source data or an implementation defect.',
+      context: 'Treat context as a versioned working set. Include the minimum sources, their locations, and the uncertainty that travels with each claim; exclude stale or irrelevant history. When a decision changes after resumption, compare the current repository or external state with the old evidence instead of treating earlier tool output as durable truth.',
+      drill: 'Practice by naming the constraint before selecting a pattern: what must be prevented, what evidence must survive, and who owns the decision. Then reject alternatives by their failure mode. This turns an exam-looking scenario into a reusable design rule rather than a fact to recall.'
+    };
+    var body = '<div class="lesson-prose">';
+    body += '<p>' + problem + '</p>';
+    body += '<p>' + choice + '</p>';
     if (example) body += '<pre><code>' + example.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</code></pre>';
-    body += '</div>' + visual(kind);
-    body += '<div class="beat limitation"><span class="label">Boundary</span><p>' + boundary + '</p></div>';
-    body += '<div class="gotcha"><span class="label">Exam signal</span><p>' + signal + '</p></div>';
+    body += visual(kind);
+    body += '<p>' + implementationDepth[kind] + '</p>';
+    body += '<p>' + boundary + '</p>';
+    body += '<p class="decision-rule"><strong>Decision rule.</strong> ' + signal + '</p>';
+    body += '</div>';
     return { id: id, title: title, body: body };
   }
   function questionSet(id, title, questions) {
