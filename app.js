@@ -170,6 +170,20 @@
     buildTopbarTracks();
     route();
 
+    document.getElementById("content-pane").addEventListener("click", async function (event) {
+      var button = event.target.closest && event.target.closest(".code-copy");
+      if (!button) return;
+      var code = button.closest(".code-panel").querySelector("code");
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        button.textContent = "Copied";
+        window.setTimeout(function () { button.textContent = "Copy"; }, 1600);
+      } catch (error) {
+        button.textContent = "Select text";
+        window.setTimeout(function () { button.textContent = "Copy"; }, 1600);
+      }
+    });
+
     var toggle = document.getElementById("sidebar-toggle");
     var sidebar = document.getElementById("sidebar");
     var overlay = document.getElementById("sidebar-overlay");
