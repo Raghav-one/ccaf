@@ -1,202 +1,127 @@
 (function () {
-  var TRACK_ORDER = ["architecture", "tools-mcp", "claude-code", "prompting", "reliability", "implementation", "exam-drills", "practice-sets"];
+  'use strict';
 
-  var TRACK_DESC = {
-    "architecture": "Agentic loops, orchestration, delegation, deterministic gates, hooks, and session continuity.",
-    "tools-mcp": "Tool interfaces, recovery-aware errors, MCP scope, built-in tools, and least privilege.",
-    "claude-code": "CLAUDE.md, skills, commands, subagents, permissions, planning, and CI workflows.",
-    "prompting": "Few-shot examples, schemas, validation, retries, batch processing, and multi-pass review.",
-    "reliability": "Context budgets, provenance, escalation, review gates, and recovering from failures.",
-    "implementation": "Reference configurations, code-level contracts, policy gates, CI boundaries, and evaluation harnesses.",
-    "exam-drills": "Original architecture scenarios that train the decision logic behind multiple-choice questions.",
-    "practice-sets": "Twenty-five original multiple-choice questions with answer reasoning across all five exam domains."
+  var DOMAIN_ORDER = ['architecture', 'tools-mcp', 'claude-code', 'prompting', 'reliability'];
+  var DOMAIN_DESC = {
+    architecture: 'Loops, delegation, enforcement, hooks, and session continuity.',
+    'tools-mcp': 'Tool contracts, error recovery, MCP scope, and built-in tools.',
+    'claude-code': 'Project instructions, commands, skills, planning, and CI.',
+    prompting: 'Precision, schemas, validation, batches, and independent review.',
+    reliability: 'Context, provenance, escalation, recovery, and human review.'
+  };
+  var SUPPLEMENTARY = {
+    architecture: ['exam-blueprint', 'implement-agent-loop', 'implement-pre-execution-gate', 'implement-subagent-handoff', 'architecture-practice'],
+    'tools-mcp': ['implement-tool-contract', 'implement-mcp-project-config', 'tools-practice'],
+    'claude-code': ['implement-claude-md-layout', 'implement-noninteractive-ci', 'claude-code-practice'],
+    prompting: ['implement-structured-output', 'implement-evaluation-harness', 'prompting-practice'],
+    reliability: ['reliability-practice']
   };
 
-  var TRACK_NAV_LABEL = {
-    "architecture": "Architecture",
-    "tools-mcp": "Tools & MCP",
-    "claude-code": "Claude Code",
-    "prompting": "Prompting",
-    "reliability": "Reliability",
-    "implementation": "Implementation",
-    "exam-drills": "Exam Drills",
-    "practice-sets": "Practice Sets"
-  };
+  var pane = document.getElementById('content-pane');
+  var sidebar = document.getElementById('sidebar');
+  var scrim = document.getElementById('sidebar-scrim');
+  var toggle = document.getElementById('sidebar-toggle');
+  var content = function () { return window.SITE_CONTENT || {}; };
 
-  function content() {
-    return window.SITE_CONTENT || {};
-  }
-
-  function buildSidebar() {
-    var nav = document.getElementById("sidebar-nav");
-    nav.innerHTML = "";
-    TRACK_ORDER.forEach(function (key) {
-      var data = content()[key];
-      if (!data) return;
-
-      var track = document.createElement("div");
-      track.className = "track";
-
-      var title = document.createElement("a");
-      title.className = "track-title";
-      title.href = "#" + key;
-      title.textContent = data.track;
-      track.appendChild(title);
-
-      var list = document.createElement("ul");
-      list.className = "step-list";
-      data.steps.forEach(function (step, i) {
-        var li = document.createElement("li");
-        var a = document.createElement("a");
-        a.href = "#" + key + "/" + step.id;
-        a.dataset.track = key;
-        a.dataset.step = step.id;
-        var badge = document.createElement("span");
-        badge.className = "step-num-badge";
-        badge.textContent = (i + 1) + ".";
-        a.appendChild(badge);
-        a.appendChild(document.createTextNode(" " + step.title));
-        li.appendChild(a);
-        list.appendChild(li);
-      });
-      track.appendChild(list);
-      nav.appendChild(track);
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, function (character) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
     });
   }
-
-  function buildTopbarTracks() {
-    var nav = document.getElementById("topbar-tracks");
-    if (!nav) return;
-    nav.innerHTML = "";
-    TRACK_ORDER.forEach(function (key) {
-      var data = content()[key];
-      if (!data) return;
-      var a = document.createElement("a");
-      a.href = "#" + key;
-      a.dataset.track = key;
-      a.textContent = TRACK_NAV_LABEL[key] || data.track;
-      nav.appendChild(a);
-    });
+  function allSteps() {
+    return Object.keys(content()).flatMap(function (key) { return content()[key].steps || []; });
   }
-
-  function renderHome() {
-    var pane = document.getElementById("content-pane");
-    var html = '<h1>Claude Certified Architect — Foundations</h1>';
-    html += '<p class="subtitle">A scenario-first study course for CCAR-F. Learn the architecture choice, the reason it wins, and the tempting alternative that fails.</p>';
-    html += '<div class="landing-cards">';
-    TRACK_ORDER.forEach(function (key) {
-      var data = content()[key];
-      if (!data) return;
-      html += '<a class="landing-card" href="#' + key + '">' +
-        '<span class="title">' + data.track + '</span>' +
-        '<span class="desc">' + TRACK_DESC[key] + '</span>' +
-        '</a>';
-    });
-    html += '</div>';
-    pane.innerHTML = html;
-  }
-
-  function renderStep(trackKey, stepId) {
-    var data = content()[trackKey];
-    if (!data) { renderHome(); return; }
-
-    var idx = data.steps.findIndex(function (s) { return s.id === stepId; });
-    if (idx === -1) idx = 0;
-    var step = data.steps[idx];
-
-    var pane = document.getElementById("content-pane");
-    var html = '<div class="crumb"><a href="#">Claude Certified Architect — Foundations</a><span class="sep">&rsaquo;</span><a href="#' + trackKey + '">' + data.track + '</a><span class="sep">&rsaquo;</span>Step ' + (idx + 1) + ' of ' + data.steps.length + '</div>';
-    html += '<h1>' + step.title + '</h1>';
-    html += step.body;
-
-    html += '<div class="step-nav">';
-    if (idx > 0) {
-      var prev = data.steps[idx - 1];
-      html += '<a class="prev" href="#' + trackKey + '/' + prev.id + '"><span class="dir">Previous</span>' + prev.title + '</a>';
-    } else {
-      html += '<span class="placeholder"></span>';
-    }
-    if (idx < data.steps.length - 1) {
-      var next = data.steps[idx + 1];
-      html += '<a class="next" href="#' + trackKey + '/' + next.id + '"><span class="dir">Next</span>' + next.title + '</a>';
-    } else {
-      html += '<span class="placeholder"></span>';
-    }
-    html += '</div>';
-
-    pane.innerHTML = html;
-    highlightActive(trackKey, step.id);
-    window.scrollTo(0, 0);
-    document.getElementById("content-pane").scrollTo && document.getElementById("content-pane").scrollTo(0, 0);
-  }
-
-  function highlightActive(trackKey, stepId) {
-    var links = document.querySelectorAll(".step-list a");
-    links.forEach(function (a) {
-      a.classList.toggle("active", a.dataset.track === trackKey && a.dataset.step === stepId);
-    });
-    var topLinks = document.querySelectorAll(".topbar-tracks a");
-    topLinks.forEach(function (a) {
-      a.classList.toggle("active", a.dataset.track === trackKey);
-    });
-  }
-
+  function stepById(id) { return allSteps().find(function (step) { return step.id === id; }); }
   function route() {
-    var hash = location.hash.replace(/^#/, "");
-    if (!hash) { renderHome(); highlightActive(null, null); return; }
-    var parts = hash.split("/");
-    var trackKey = parts[0];
-    var stepId = parts[1];
-    if (!content()[trackKey]) { renderHome(); return; }
-    if (!stepId) {
-      renderStep(trackKey, content()[trackKey].steps[0].id);
-    } else {
-      renderStep(trackKey, stepId);
+    var key = location.hash.replace(/^#/, '');
+    return DOMAIN_ORDER.includes(key) ? key : 'architecture';
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    scrim.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+  function openSidebar() {
+    sidebar.classList.add('open');
+    scrim.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+  }
+  function label(track) {
+    return track.replace(/^\d+\.\s*/, '').replace(/\s+—\s+\d+%$/, '');
+  }
+  function weight(track) {
+    var found = track.match(/\d+%/);
+    return found ? found[0] : '';
+  }
+  function buildSidebar(activeKey) {
+    var nav = document.getElementById('sidebar-nav');
+    nav.innerHTML = DOMAIN_ORDER.map(function (key, index) {
+      var domain = content()[key];
+      return '<a class="domain-link' + (key === activeKey ? ' active' : '') + '" href="#' + key + '"' + (key === activeKey ? ' aria-current="page"' : '') + '><span class="domain-number">' + String(index + 1).padStart(2, '0') + '</span><span><strong>' + escapeHtml(label(domain.track)) + '</strong><small>' + escapeHtml(DOMAIN_DESC[key]) + '</small></span></a>';
+    }).join('');
+  }
+  function sectionMarkup(step, index, supplementary) {
+    return '<section class="concept-section" id="' + escapeHtml(step.id) + '"><div class="concept-kicker">' + (supplementary ? 'Implementation and practice' : 'Syllabus concept') + ' · ' + String(index + 1).padStart(2, '0') + '</div><h2>' + escapeHtml(step.title) + '</h2><div class="lesson-prose">' + step.body + '</div></section>';
+  }
+  function renderDomain(key) {
+    var domain = content()[key];
+    var core = domain.steps;
+    var extra = SUPPLEMENTARY[key].map(stepById).filter(Boolean);
+    var html = '<article class="reader"><div class="eyebrow">Domain ' + (DOMAIN_ORDER.indexOf(key) + 1) + ' · ' + escapeHtml(weight(domain.track)) + '</div><h1>' + escapeHtml(label(domain.track)) + '</h1><p class="lede">' + escapeHtml(DOMAIN_DESC[key]) + '</p><nav class="on-page-nav" aria-label="On this page"><span>On this page</span>' + core.map(function (step, index) { return '<a href="#' + key + '" data-section="' + escapeHtml(step.id) + '">' + String(index + 1).padStart(2, '0') + ' ' + escapeHtml(step.title) + '</a>'; }).join('') + '</nav><div class="sections">' + core.map(function (step, index) { return sectionMarkup(step, index, false); }).join('') + '<section class="supplementary"><div class="supplementary-head"><div><div class="concept-kicker">Applied study</div><h2>Implementation and review</h2></div><p>Concrete implementation patterns and original practice for this domain.</p></div>' + extra.map(function (step, index) { return sectionMarkup(step, index, true); }).join('') + '</section></div></article>';
+    pane.innerHTML = html;
+    document.getElementById('topbar-title').textContent = label(domain.track);
+    buildSidebar(key);
+    decorateCode();
+    window.scrollTo(0, 0);
+    pane.focus({ preventScroll: true });
+    closeSidebar();
+  }
+  function decorateCode() {
+    pane.querySelectorAll('pre').forEach(function (pre) {
+      if (pre.closest('.code-panel')) return;
+      var code = pre.querySelector('code');
+      if (!code) return;
+      var panel = document.createElement('div');
+      panel.className = 'code-panel';
+      var head = document.createElement('div');
+      head.className = 'code-head';
+      var labelNode = document.createElement('span');
+      labelNode.textContent = detectLanguage(code.textContent);
+      var copy = document.createElement('button');
+      copy.type = 'button'; copy.className = 'code-copy'; copy.textContent = 'Copy';
+      copy.setAttribute('aria-label', 'Copy code example');
+      head.appendChild(labelNode); head.appendChild(copy);
+      pre.replaceWith(panel); panel.appendChild(head); panel.appendChild(pre);
+    });
+  }
+  function detectLanguage(source) {
+    var text = (source || '').trim();
+    if (/^(from |import |def |async def )/.test(text)) return 'Python';
+    if (/^(\{|\[)/.test(text)) return 'JSON';
+    if (/^(name:|on:|jobs:|---)/.test(text)) return 'YAML';
+    if (/^(claude |npm |pnpm |git |# )/.test(text)) return 'Shell';
+    return 'Code';
+  }
+  function render() { renderDomain(route()); }
+
+  pane.addEventListener('click', async function (event) {
+    var sectionLink = event.target.closest('a[data-section]');
+    if (sectionLink) {
+      event.preventDefault();
+      var section = document.getElementById(sectionLink.dataset.section);
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
     }
-    closeSidebarMobile();
-  }
-
-  function closeSidebarMobile() {
-    var sidebar = document.getElementById("sidebar");
-    var overlay = document.getElementById("sidebar-overlay");
-    sidebar.classList.remove("open");
-    overlay.classList.remove("open");
-    var toggle = document.getElementById("sidebar-toggle");
-    if (toggle) toggle.setAttribute("aria-expanded", "false");
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    buildSidebar();
-    buildTopbarTracks();
-    route();
-
-    document.getElementById("content-pane").addEventListener("click", async function (event) {
-      var button = event.target.closest && event.target.closest(".code-copy");
-      if (!button) return;
-      var code = button.closest(".code-panel").querySelector("code");
-      try {
-        await navigator.clipboard.writeText(code.textContent);
-        button.textContent = "Copied";
-        window.setTimeout(function () { button.textContent = "Copy"; }, 1600);
-      } catch (error) {
-        button.textContent = "Select text";
-        window.setTimeout(function () { button.textContent = "Copy"; }, 1600);
-      }
-    });
-
-    var toggle = document.getElementById("sidebar-toggle");
-    var sidebar = document.getElementById("sidebar");
-    var overlay = document.getElementById("sidebar-overlay");
-    toggle.addEventListener("click", function () {
-      var opened = sidebar.classList.toggle("open");
-      overlay.classList.toggle("open", opened);
-      toggle.setAttribute("aria-expanded", String(opened));
-    });
-    overlay.addEventListener("click", closeSidebarMobile);
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") closeSidebarMobile();
-    });
+    var button = event.target.closest('.code-copy');
+    if (!button) return;
+    try { await navigator.clipboard.writeText(button.closest('.code-panel').querySelector('code').textContent); button.textContent = 'Copied'; }
+    catch (_) { button.textContent = 'Select text'; }
+    window.setTimeout(function () { button.textContent = 'Copy'; }, 1600);
   });
-
-  window.addEventListener("hashchange", route);
+  toggle.addEventListener('click', function () { sidebar.classList.contains('open') ? closeSidebar() : openSidebar(); });
+  document.getElementById('sidebar-close').addEventListener('click', closeSidebar);
+  scrim.addEventListener('click', closeSidebar);
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') closeSidebar(); });
+  window.addEventListener('hashchange', render);
+  document.addEventListener('DOMContentLoaded', render);
 })();
