@@ -1,3 +1,14 @@
+:root {
+  --bg: #ffffff;
+  --bg-sidebar: #fbfcfb;
+  --ink-soft: #4f565d;
+  --ink-faint: #747b83;
+  --accent: #0a876a;
+  --accent-dim: #edf8f5;
+  --rule: #e0e5e2;
+  --radius: 8px;
+}
+
 /* Content panels created before the consolidated reader use code-meta. */
 .code-meta {
   align-items: center;
@@ -15,4 +26,38 @@
   font-weight: 780;
   letter-spacing: .08em;
   text-transform: uppercase;
+}
+
+/* Existing inline SVGs use the original CCAF variable-based diagram system. */
+.ccar-diagram {
+  background: #fbfcfb;
+  border: 1px solid #e0e5e2;
+  border-radius: 8px;
+  margin: 21px 0;
+  overflow: hidden;
+  padding: 14px;
+}
+
+.ccar-diagram svg {
+  display: block;
+  height: auto;
+  margin: 0 !important;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+.ccar-diagram text { fill: #202123; font-size: 14px; font-weight: 650; }
+.ccar-diagram text.muted { fill: #747b83; font-size: 12px; font-weight: 500; }
+.ccar-diagram text.label { fill: #0a876a; font-size: 12px; font-weight: 750; letter-spacing: .02em; }
+.ccar-diagram .cell,
+.ccar-diagram .node { fill: #ffffff; stroke: #4f565d; stroke-width: 1.45; }
+.ccar-diagram .cell.active,
+.ccar-diagram .node.active { fill: #edf8f5; stroke: #0a876a; stroke-width: 2; }
+.ccar-diagram .edge { fill: none; stroke: #747b83; stroke-width: 1.6; }
+.ccar-diagram .arrow,
+.ccar-diagram .route { fill: none; stroke: #0a876a; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+
+@media (max-width: 560px) {
+  .ccar-diagram { padding: 8px; }
 }
