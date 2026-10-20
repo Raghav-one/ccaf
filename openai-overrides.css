@@ -1,0 +1,18 @@
+/* Content panels created before the consolidated reader use code-meta. */
+.code-meta {
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #dfe3e7;
+  display: flex;
+  justify-content: space-between;
+  min-height: 38px;
+  padding: 6px 12px 6px 15px;
+}
+
+.code-meta span {
+  color: #50708b;
+  font-size: 10px;
+  font-weight: 780;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
